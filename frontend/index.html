@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com" rel="stylesheet">
+
+        <title>NJ Transit Tracker </title>
+<style>
+    #header{
+        display: flex;
+
+    }
+    #header1{
+        margin:0px;
+        padding:0px;
+        font-family: Syne;
+    }
+    body{
+        background-color: black;
+    }
+    #clock{
+        color:yellow;
+        margin-left: auto;
+        margin-top:27px;
+        font-size: 38px;
+    }
+    hr{
+        margin:0px;
+        padding: 0px;
+        border-color: rgb(42, 41, 41);
+    }
+</style>
+    </head>
+    <body>
+        <div id="header">
+            <p style="float: left;margin-left:20px;border-radius:5px;display: flex;width: 75px;height: 45px;background-color: yellow;justify-content: center;align-items: center;font-family: 'Syne', sans-serif;font-size: 28px;"><b>NJT</b> </p>
+        <div id="header1"><p style="margin-top: 18px;padding-top: 8px;margin-bottom: 0px;margin-left: 12px;color: white;font-family:  'Syne', sans-serif;font-size: 30px;">Rail Tracker</p>
+        <p style="margin: 0px;margin-top:7px; margin-left: 12px;padding: 0px;color: white;font-family: 'IBM Plex Mono', monospace;font-size: 13px;">LIVE DEPARTURES</p></div>  
+        <span id="clock">  </span> </div> 
+       
+
+        <br><hr>
+         <div id="controls">
+            <p style="color: rgb(69, 67, 67);margin-left: 20px;">Select Station</p>
+            <select name="Stations" id="Station" style="margin-left: 20px; width: 800px;height: 30px;border-radius: 5px;background-color: rgb(42, 41, 41);color: white;">
+            <option value="AM">Aberdeen-Matawan</option>
+            <option value="AB">Absecon</option>
+            <option value="AZ">Allendale</option>
+            <option value="AH">Allenhurst</option>
+            <option value="AS">Anderson Street</option>
+            <option value="AN">Annandale</option>
+            <option value="AP">Asbury Park</option>
+            <option value="AO">Atco</option>
+            <option value="AC">Atlantic City Rail Terminal</option>
+            <option value="AV">Avenel</option>
+            <option value="BI">Basking Ridge</option>
+            <option value="BH">Bay Head</option>
+            <option value="MC">Bay Street</option>
+            <option value="BS">Belmar</option>
+            <option value="BY">Berkeley Heights</option>
+            <option value="BV">Bernardsville</option>
+            <option value="BM">Bloomfield</option>
+            <option value="BN">Boonton</option>
+            <option value="BK">Bound Brook</option>
+            <option value="BB">Bradley Beach</option>
+            <option value="BU">Brick Church</option>
+            <option value="BW">Bridgewater</option>
+            <option value="BF">Broadway Fair Lawn</option>
+            <option value="CB">Campbell Hall</option>
+            <option value="CM">Chatham</option>
+            <option value="CY">Cherry Hill</option>
+            <option value="IF">Clifton</option>
+            <option value="CN">Convent Station</option>
+            <option value="XC">Cranford</option>
+            <option value="DL">Delawanna</option>
+            <option value="DV">Denville</option>
+            <option value="DO">Dover</option>
+            <option value="DN">Dunellen</option>
+            <option value="EO">East Orange</option>
+            <option value="ED">Edison</option>
+            <option value="EH">Egg Harbor City</option>
+            <option value="EL">Elberon</option>
+            <option value="EZ">Elizabeth</option>
+            <option value="EN">Emerson</option>
+            <option value="EX">Essex Street</option>
+            <option value="FW">Fanwood</option>
+            <option value="FH">Far Hills</option>
+            <option value="FE">Finderne</option>
+            <option value="GD">Garfield</option>
+            <option value="GW">Garwood</option>
+            <option value="GI">Gillette</option>
+            <option value="GL">Gladstone</option>
+            <option value="GG">Glen Ridge</option>
+            <option value="GK">Glen Rock Boro Hall</option>
+            <option value="RS">Glen Rock Main Line</option>
+            <option value="GA">Great Notch</option>
+            <option value="HQ">Hackettstown</option>
+            <option value="HL">Hamilton</option>
+            <option value="HN">Hammonton</option>
+            <option value="RM">Harriman</option>
+            <option value="HW">Hawthorne</option>
+            <option value="HZ">Hazlet</option>
+            <option value="HG">High Bridge</option>
+            <option value="HI">Highland Avenue</option>
+            <option value="HD">Hillsdale</option>
+            <option value="HB">Hoboken</option>
+            <option value="UF">Hohokus</option>
+            <option value="JA">Jersey Avenue</option>
+            <option value="KG">Kingsland</option>
+            <option value="HP">Lake Hopatcong</option>
+            <option value="ON">Lebanon</option>
+            <option value="LP">Lincoln Park</option>
+            <option value="LI">Linden</option>
+            <option value="LW">Lindenwold</option>
+            <option value="FA">Little Falls</option>
+            <option value="LS">Little Silver</option>
+            <option value="LB">Long Branch</option>
+            <option value="LN">Lyndhurst</option>
+            <option value="LY">Lyons</option>
+            <option value="MA">Madison</option>
+            <option value="MZ">Mahwah</option>
+            <option value="SQ">Manasquan</option>
+            <option value="MW">Maplewood</option>
+            <option value="XU">Meadowlands</option>
+            <option value="MP">Metropark</option>
+            <option value="MU">Metuchen</option>
+            <option value="MI">Middletown NJ</option>
+            <option value="MD">Middletown NY</option>
+            <option value="MB">Millburn</option>
+            <option value="GO">Millington</option>
+            <option value="MK">Monmouth Park</option>
+            <option value="HS">Montclair Heights</option>
+            <option value="UV">Montclair State U</option>
+            <option value="ZM">Montvale</option>
+            <option value="MX">Morris Plains</option>
+            <option value="MR">Morristown</option>
+            <option value="HV">Mount Arlington</option>
+            <option value="OL">Mount Olive</option>
+            <option value="TB">Mount Tabor</option>
+            <option value="MS">Mountain Avenue</option>
+            <option value="ML">Mountain Lakes</option>
+            <option value="MT">Mountain Station</option>
+            <option value="MV">Mountain View</option>
+            <option value="MH">Murray Hill</option>
+            <option value="NN">Nanuet</option>
+            <option value="NT">Netcong</option>
+            <option value="NE">Netherwood</option>
+            <option value="NH">New Bridge Landing</option>
+            <option value="NB">New Brunswick</option>
+            <option value="NV">New Providence</option>
+            <option value="NY">New York Penn Station</option>
+            <option value="NA">Newark Airport</option>
+            <option value="ND">Newark Broad Street</option>
+            <option value="NP">Newark Penn Station</option>
+            <option value="OR">North Branch</option>
+            <option value="NZ">North Elizabeth</option>
+            <option value="OD">Oradell</option>
+            <option value="OG">Orange</option>
+            <option value="OS">Otisville</option>
+            <option value="PV">Park Ridge</option>
+            <option value="PS">Passaic</option>
+            <option value="RN">Paterson</option>
+            <option value="PC">Peapack</option>
+            <option value="PQ">Pearl River</option>
+            <option value="PN">Pennsauken</option>
+            <option value="PE">Perth Amboy</option>
+            <option value="PH">Philadelphia</option>
+            <option value="PF">Plainfield</option>
+            <option value="PL">Plauderville</option>
+            <option value="PP">Point Pleasant Beach</option>
+            <option value="PO">Port Jervis</option>
+            <option value="PR">Princeton</option>
+            <option value="PJ">Princeton Junction</option>
+            <option value="FZ">Radburn Fair Lawn</option>
+            <option value="RH">Rahway</option>
+            <option value="RY">Ramsey Main St</option>
+            <option value="17">Ramsey Route 17</option>
+            <option value="RA">Raritan</option>
+            <option value="RB">Red Bank</option>
+            <option value="RW">Ridgewood</option>
+            <option value="RG">River Edge</option>
+            <option value="RL">Roselle Park</option>
+            <option value="RF">Rutherford</option>
+            <option value="CW">Salisbury Mills-Cornwall</option>
+            <option value="SC">Secaucus Concourse</option>
+            <option value="TS">Secaucus Lower Lvl</option>
+            <option value="SE">Secaucus Upper Lvl</option>
+            <option value="RT">Short Hills</option>
+            <option value="XG">Sloatsburg</option>
+            <option value="SM">Somerville</option>
+            <option value="CH">South Amboy</option>
+            <option value="SO">South Orange</option>
+            <option value="LA">Spring Lake</option>
+            <option value="SV">Spring Valley</option>
+            <option value="SG">Stirling</option>
+            <option value="SF">Suffern</option>
+            <option value="ST">Summit</option>
+            <option value="TE">Teterboro</option>
+            <option value="TO">Towaco</option>
+            <option value="TR">Trenton</option>
+            <option value="TC">Tuxedo</option>
+            <option value="US">Union</option>
+            <option value="UM">Upper Montclair</option>
+            <option value="WK">Waldwick</option>
+            <option value="WA">Walnut Street</option>
+            <option value="WS">Washington Station</option>
+            <option value="WG">Watchung Avenue</option>
+            <option value="WT">Watsessing Avenue</option>
+            <option value="23">Wayne-Route 23</option>
+            <option value="WM">Wesmont</option>
+            <option value="WF">Westfield</option>
+            <option value="WW">Westwood</option>
+            <option value="WH">White House</option>
+            <option value="WI">Wilmington Station</option>
+            <option value="WR">Wood Ridge</option>
+            <option value="WB">Woodbridge</option>
+            <option value="WL">Woodcliff Lake</option>
+            </select>
+            <button id="refreshbutton" style="background-color: rgb(42, 41, 41);color: white;margin-left: 75px;width:150px ;height: 30px;"><span style="font-size: 16px;">&#x21bb;</span>
+Refresh</button>
+        </div>
+
+        <div id="train_data" style="color: rgb(76, 74, 74); margin-left: 40px;margin-top: 40px;"></div>
+<script>
+    function updateClock() {
+        var todayDate = new Date();
+        var todayTime = todayDate.toLocaleTimeString();
+        var clockElement = document.getElementById('clock');
+        clockElement.textContent = todayTime;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); 
+    function refreshPage() {
+        window.location.reload();
+    }
+    const refreshInterval = setInterval(refreshPage, 30000);
+    document.getElementById("refreshbutton").addEventListener("click", function() {
+        clearInterval(refreshInterval);
+        refreshPage();
+    });
+
+    document.getElementById("Station").addEventListener("change",function(){
+        const selectedStation = this.value;
+        fetch(`http://localhost:5000/trains/${selectedStation}`)
+        .then(response => response.json()).then(data =>  {console.log(data[0]);let htmlTable="<table style='width: 100%;'><tr><th>Train</th><th>Line</th><th>DESTINATION</th><th>Departure Time</th><th>STATUS</th></tr>";
+            for (let i of data){
+                let statusColor = "white";
+                if (i.STATUS.includes("Cancelled")) statusColor = "red";
+                else if (i.STATUS.includes("Min") && i.SEC_LATE > 0) statusColor = "orange";
+                htmlTable+= `<tr style='text-align: center;'><td>${i.TRAIN_ID}</td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${i.SCHED_DEP_DATE}</td><td>${i.STATUS}</td></tr>`;}
+            htmlTable+=`</table>`;
+            document.getElementById("train_data").innerHTML=htmlTable;})
+    });
+</script>
+    </body>
+    </html>
+
+
