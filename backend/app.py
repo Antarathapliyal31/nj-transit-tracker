@@ -1,11 +1,13 @@
 print("starting...")
-from flask import Flask,request, jsonify
+from flask import Flask,request, jsonify,send_from_directory
 import json
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import requests
-from flask import send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 
 load_dotenv()
@@ -15,6 +17,8 @@ password=os.getenv("NJT_PWD")
 token=os.getenv("NJT_TOKEN")
 app=Flask(__name__)
 CORS(app)
+limiter = Limiter(get_remote_address, app=app, default_limits=["100 per day", "10 per minute"])
+
 print("TOKEN FROM ENV:", os.getenv("NJT_TOKEN"))
 # response = requests.post("https://raildata.njtransit.com/api/TrainData/getToken", data={"username": username, "password": password})
 # print(response.json())
