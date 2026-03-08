@@ -66,8 +66,7 @@ def refresh_token():
                 print("Token refresh failed - keeping old token")
         except Exception as e:
             print("Token refresh error:", e)
-
-
+            
 # ── ROUTES ──
 @app.route("/")
 def index():
