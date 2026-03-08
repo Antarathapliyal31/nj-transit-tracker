@@ -735,6 +735,9 @@
             if (!swRegistration) {
                 swRegistration = await navigator.serviceWorker.ready;
             }
+            // Unsubscribe from any old subscription first
+            const existingSub = await swRegistration.pushManager.getSubscription();
+            if (existingSub) await existingSub.unsubscribe();
 
             pushSubscription = await swRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
