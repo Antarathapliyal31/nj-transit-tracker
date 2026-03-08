@@ -3,13 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        @media (max-width: 768px) {
-        table {
-            font-size: 12px;
-        }
-        th, td {
-            padding: 8px 6px;
-        }
+        
         
 }
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +12,13 @@
 
         <title>NJ Transit Tracker </title>
 <style>
-    
+    @media (max-width: 768px) {
+        table {
+            font-size: 12px;
+        }
+        th, td {
+            padding: 8px 6px;
+        }
     #header{
         display: flex;
 
@@ -53,7 +53,8 @@
     }
     #train_data {
     overflow-x: auto;
-}
+    }
+
     @keyframes pulsating{
         0%{transform:scale(1);opacity:1;}
         50%{transform:scale(2);opacity:0.5;}
