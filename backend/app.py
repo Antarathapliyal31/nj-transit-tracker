@@ -154,15 +154,15 @@ def check_and_push():
                                 data={"token": token, "station": "NB"})
             trains_data = res.json().get("ITEMS", [])
             train_status = {}
-            for t in trains_data:
-                tid = t["TRAIN_ID"]
+            for train in trains_data:
+                tid = train["TRAIN_ID"]
                 if tid in all_trains:
-                    if t.get("STATUS", "").includes("Cancelled"):
-                        train_status[tid] = ("cancelled", t.get("DESTINATION", ""))
-                    elif t.get("SEC_LATE", 0) > 120:
-                        train_status[tid] = ("delayed", t.get("DESTINATION", ""), t.get("SEC_LATE", 0))
+                    if "Cancelled" in train.get("STATUS", ""):
+                        train_status[tid] = ("cancelled", train.get("DESTINATION", ""))
+                    elif train.get("SEC_LATE", 0) > 120:
+                        train_status[tid] = ("delayed", train.get("DESTINATION", ""), train.get("SEC_LATE", 0))
                     else:
-                        train_status[tid] = ("ontime", t.get("DESTINATION", ""))
+                        train_status[tid] = ("ontime", train.get("DESTINATION", ""))
 
             # Send pushes
             for endpoint, sub_json, trains_json in rows:
