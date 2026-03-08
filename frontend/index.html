@@ -256,7 +256,7 @@ Refresh</button>
         refreshPage(document.getElementById("Station").value);
     });
     function allStops(trainId){
-        fetch(`http://localhost:5000/trains/stops/${trainId}`).then (response => response.json()).then (data => {console.log(data);
+        fetch(`/trains/stops/${trainId}`).then (response => response.json()).then (data => {console.log(data);
             let stop=data["STOPS"];
             let stopsList="";
             for (let i of stop){
@@ -276,7 +276,7 @@ Refresh</button>
         }
 }
     function fetch_train_data(station){
-        fetch(`http://localhost:5000/trains/${station}`)
+        fetch(`/trains/${station}`)
         .then(response => response.json()).then(data =>  {console.log(data[1]);let htmlTable="<div id='styletable'><table style='width: 100%;border-collapse: collapse;border: 1px solid #2a2a2a;border-radius: 9px;'><tr><th style='rgb(187, 193, 35)'>DEPARTURE TIME</th><th>TRAIN</th><th>STOPS</th><th>LINE</th><th>DESTINATION</th><th>STATUS</th></tr>";
             for (let i of data){
                 let displaystatus = i.STATUS;
