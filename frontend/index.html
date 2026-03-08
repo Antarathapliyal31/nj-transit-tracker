@@ -851,7 +851,7 @@
                 const prev = { ...trackedTrains[id] };
                 let newStatus = 'ontime';
                 let newSecLate = train.SEC_LATE || 0;
-                if (train.STATUS && train.STATUS.includes('Cancelled')) { newStatus = 'cancelled'; }
+                if (train.STATUS && train.STATUS.toLowerCase().includes('cancelled')) { newStatus = 'cancelled'; }
                 else if (train.SEC_LATE > 120) { newStatus = 'delayed'; }
                 trackedTrains[id].status = newStatus;
                 trackedTrains[id].secLate = newSecLate;
@@ -928,9 +928,9 @@
                     let displayStatus = i.STATUS || "";
                     let statusColor = "", statusBg = "";
                     if (!i.STATUS) {}
-                    else if (i.STATUS.includes("Cancelled")) { statusColor = "#ef4444"; statusBg = "#2e0a0a"; }
+                    else if (i.STATUS.toLowerCase().includes("cancelled")) { statusColor = "#ef4444"; statusBg = "#2e0a0a"; }
                     else if (i.SEC_LATE > 120) { statusColor = "#fbbf24"; statusBg = "#4d2e0a"; displayStatus = `+${Math.floor(i.SEC_LATE/60)} min late`; }
-                    else if (i.STATUS.includes("Min")) { statusColor = "#34d399"; statusBg = "#0d2e1a"; }
+                    else if (i.STATUS.toLowerCase().includes("min")) { statusColor = "#34d399"; statusBg = "#0d2e1a"; }
 
                     const dot = statusColor ? `<span class="status-dot" style="background:${statusColor}"></span>` : "";
                     const badge = displayStatus ? `<span class="status-badge" style="background:${statusBg};color:${statusColor}">${displayStatus}</span>` : "";
