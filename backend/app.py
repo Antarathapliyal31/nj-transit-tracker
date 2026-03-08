@@ -46,7 +46,12 @@ def get_db():
 def refresh_token():
     global token
     while True:
-        time.sleep(24 * 60 * 60)
+        now = datetime.now()
+        # Sleep until next midnight
+        midnight = (now + timedelta(days=1)).replace(hour=0, minute=1, second=0, microsecond=0)
+        sleep_seconds = (midnight - now).total_seconds()
+        print(f"Token refresh sleeping for {sleep_seconds/3600:.1f} hours until midnight")
+        time.sleep(sleep_seconds)
         try:
             response = requests.post(
                 "https://raildata.njtransit.com/api/TrainData/getToken",
@@ -55,12 +60,11 @@ def refresh_token():
             new_token = response.json().get("token")
             if new_token:
                 token = new_token
-                print("Token refreshed:", token[:10])
+                print("Token refreshed at midnight:", token[:10])
+            else:
+                print("Token refresh failed - keeping old token")
         except Exception as e:
             print("Token refresh error:", e)
-
-t = threading.Thread(target=refresh_token, daemon=True)
-t.start()
 
 # ── ROUTES ──
 @app.route("/")
