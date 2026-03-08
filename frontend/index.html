@@ -12,13 +12,7 @@
 
         <title>NJ Transit Tracker </title>
 <style>
-    @media (max-width: 768px) {
-        table {
-            font-size: 12px;
-        }
-        th, td {
-            padding: 8px 6px;
-        }
+    
     #header{
         display: flex;
 
@@ -54,7 +48,13 @@
     #train_data {
     overflow-x: auto;
     }
-
+    @media (max-width: 768px) {
+        table {
+            font-size: 12px;
+        }
+        th, td {
+            padding: 8px 6px;
+        }
     @keyframes pulsating{
         0%{transform:scale(1);opacity:1;}
         50%{transform:scale(2);opacity:0.5;}
@@ -291,7 +291,7 @@ Refresh</button>
 }
     function fetch_train_data(station){
         fetch(`/trains/${station}`)
-        .then(response => response.json()).then(data =>  {console.log(data[1]);let htmlTable=`<div id='styletable' style='overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:15px;'><table style='width:max-content;min-width:100%;border-collapse:collapse;border:1px solid #2a2a2a;'><tr><th style='color:rgb(187,193,35)'>DEPARTURE TIME</th><th>TRAIN</th><th>STOPS</th><th>LINE</th><th>DESTINATION</th><th>STATUS</th></tr>`;
+        .then(response => response.json()).then(data =>  {console.log(data[1]);let htmlTable="<div id='styletable'><table style='width: 100%;border-collapse: collapse;border: 1px solid #2a2a2a;border-radius: 9px;'><tr><th style='rgb(187, 193, 35)'>DEPARTURE TIME</th><th>TRAIN</th><th>STOPS</th><th>LINE</th><th>DESTINATION</th><th>STATUS</th></tr>";
             for (let i of data){
                 let displaystatus = i.STATUS;
                 let statusColor = "white";
@@ -312,7 +312,7 @@ Refresh</button>
                     dot =`<span style='display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${statusColor};animation:pulsating 1.5s infinite;margin-right:8px;'></span>`;
                 }
 
-                htmlTable+= `<tr style='text-align: center;'><td style='color: rgb(187, 193, 35)'>${i.SCHED_DEP_DATE}</td><td>${i.TRAIN_ID}</td><td><button onclick="toggleStops('${i.TRAIN_ID}')" style="background:none;border:1px solid #444;color:white;cursor:pointer;padding:4px 8px;border-radius:4px;">▼</button></td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${dot} &nbsp;<span style='background:${statusBg};color:${statusColor};padding:10px 12px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:1px;white-space:nowrap;'>${displaystatus}</span></td></tr>`;
+                htmlTable+= `<tr style='text-align: center;'><td style='color: rgb(187, 193, 35)'>${i.SCHED_DEP_DATE}</td><td>${i.TRAIN_ID}</td><td><button onclick="toggleStops('${i.TRAIN_ID}')" style="'background:none;border:1px solid #444;color:white;cursor:pointer;padding:4px 8px;border-radius:4px;">▼</button></td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${dot} &nbsp;<span style='background:${statusBg};color:${statusColor};padding:10px 12px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:1px;white-space:nowrap;'>${displaystatus}</span></td></tr>`;
                 htmlTable+=`<tr id="stops-${i.TRAIN_ID}" style="display:none; padding:5px;max-height: 170px;overflow-y: auto;"><td colspan="4" id="stops-content-${i.TRAIN_ID}"></td></tr>`;}
             htmlTable+=`</table></div>`;
             document.getElementById("train_data").innerHTML=htmlTable;})
