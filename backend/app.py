@@ -22,7 +22,8 @@ print("TOKEN FROM ENV:", os.getenv("NJT_TOKEN"))
 
 @app.route("/")
 def index():
-    return send_from_directory("../frontend", "index.html")
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    return send_from_directory(frontend_path, "index.html")
 
 @app.route("/trains/<station_name>")
 def get_trains(station_name):
