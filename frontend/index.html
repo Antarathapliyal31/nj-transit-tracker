@@ -35,7 +35,6 @@
         min-height: 100vh;
     }
 
-    /* ── HEADER ── */
     #header {
         display: flex;
         align-items: center;
@@ -58,10 +57,7 @@
         color: black;
     }
 
-    #header-titles {
-        flex: 1;
-        min-width: 0;
-    }
+    #header-titles { flex: 1; min-width: 0; }
 
     #header-titles .title {
         font-family: 'Syne', sans-serif;
@@ -88,12 +84,8 @@
         white-space: nowrap;
     }
 
-    hr {
-        border: none;
-        border-top: 1px solid var(--border);
-    }
+    hr { border: none; border-top: 1px solid var(--border); }
 
-    /* ── CONTROLS ── */
     #controls {
         padding: 16px 20px;
         display: flex;
@@ -135,10 +127,7 @@
         cursor: pointer;
     }
 
-    #Station:focus {
-        outline: none;
-        border-color: var(--yellow);
-    }
+    #Station:focus { outline: none; border-color: var(--yellow); }
 
     #refreshbutton {
         flex-shrink: 0;
@@ -158,24 +147,149 @@
         transition: border-color 0.2s, background 0.2s;
     }
 
-    #refreshbutton:hover {
-        border-color: var(--yellow);
-        background-color: #1a1a00;
-    }
-
+    #refreshbutton:hover { border-color: var(--yellow); background-color: #1a1a00; }
     #refreshbutton .icon { font-size: 15px; }
 
-    /* ── TABLE WRAPPER ── */
+    /* ── TRACKER SECTION ── */
+    #tracker-section {
+        margin: 0 16px 16px;
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        background: #0a0a0a;
+        overflow: hidden;
+    }
+
+    #tracker-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    #tracker-header:hover { background: #111; }
+
+    .tracker-title {
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--yellow);
+    }
+
+    #tracker-arrow { color: var(--text-dim); font-size: 12px; }
+
+    #tracker-body {
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #tracker-input-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    #track-train-input {
+        flex: 1;
+        min-width: 120px;
+        height: 36px;
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        color: white;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        padding: 0 12px;
+    }
+
+    #track-train-input::placeholder { color: var(--text-muted); }
+    #track-train-input:focus { outline: none; border-color: var(--yellow); }
+
+    #track-btn {
+        height: 36px;
+        padding: 0 16px;
+        background: var(--yellow);
+        color: black;
+        border: none;
+        border-radius: 6px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+    }
+
+    #track-btn:hover { opacity: 0.85; }
+
+    #notif-permission-btn {
+        height: 32px;
+        padding: 0 14px;
+        background: none;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        color: var(--text-dim);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 11px;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+        white-space: nowrap;
+    }
+
+    #notif-permission-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+    #notif-permission-btn.granted { color: #34d471; border-color: #34d471; cursor: default; }
+
+    .tracked-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 10px;
+    }
+
+    .tracked-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .tracked-train-id { color: var(--yellow); font-weight: 700; font-size: 13px; }
+
+    .tracked-remove {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1;
+        padding: 2px 4px;
+        flex-shrink: 0;
+        transition: color 0.2s;
+    }
+
+    .tracked-remove:hover { color: #ef4444; }
+
+    /* ── TABLE ── */
     #train_data {
         padding: 0 16px 24px;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    /* ── TABLE ── */
     table {
         width: 100%;
-        min-width: 560px;
+        min-width: 580px;
         border-collapse: collapse;
         background: var(--surface);
         border-radius: 12px;
@@ -183,9 +297,7 @@
         border: 1px solid var(--border);
     }
 
-    thead tr {
-        background: #0d0d0d;
-    }
+    thead tr { background: #0d0d0d; }
 
     th {
         padding: 14px 16px;
@@ -207,33 +319,13 @@
     }
 
     tbody tr:last-child td { border-bottom: none; }
-
     tbody tr:hover { background: #161616; }
 
-    .dep-time {
-        color: var(--yellow);
-        font-weight: 500;
-        white-space: nowrap;
-        font-size: 13px;
-    }
+    .dep-time { color: var(--yellow); font-weight: 500; white-space: nowrap; font-size: 13px; }
+    .train-id { color: var(--text-dim); font-size: 12px; }
+    .destination { font-weight: 500; white-space: nowrap; }
+    .line-name { color: var(--text-dim); font-size: 11px; white-space: nowrap; }
 
-    .train-id {
-        color: var(--text-dim);
-        font-size: 12px;
-    }
-
-    .destination {
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .line-name {
-        color: var(--text-dim);
-        font-size: 11px;
-        white-space: nowrap;
-    }
-
-    /* stops button */
     .stops-btn {
         background: none;
         border: 1px solid #3a3a3a;
@@ -245,18 +337,22 @@
         transition: border-color 0.2s, color 0.2s;
         white-space: nowrap;
     }
-    .stops-btn:hover {
-        border-color: var(--yellow);
-        color: var(--yellow);
-    }
+    .stops-btn:hover { border-color: var(--yellow); color: var(--yellow); }
 
-    /* status badge */
-    .status-cell {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        white-space: nowrap;
+    .bell-btn {
+        background: none;
+        border: 1px solid #3a3a3a;
+        color: var(--text-dim);
+        cursor: pointer;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 13px;
+        transition: border-color 0.2s, color 0.2s;
     }
+    .bell-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+    .bell-btn.tracking { border-color: var(--yellow); color: var(--yellow); background: #1a1a00; }
+
+    .status-cell { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 
     .status-dot {
         display: inline-block;
@@ -276,12 +372,9 @@
         white-space: nowrap;
     }
 
-    /* stops expanded row */
     .stops-row { display: none; }
-    .stops-row td {
-        padding: 0;
-        border-bottom: 1px solid var(--border);
-    }
+    .stops-row td { padding: 0; border-bottom: 1px solid var(--border); }
+
     .stops-inner {
         max-height: 200px;
         overflow-y: auto;
@@ -291,13 +384,9 @@
         gap: 4px 16px;
         background: #0a0a0a;
     }
-    .stop-item {
-        font-size: 11px;
-        padding: 3px 0;
-        letter-spacing: 0.3px;
-    }
 
-    /* ── LOADING STATE ── */
+    .stop-item { font-size: 11px; padding: 3px 0; letter-spacing: 0.3px; }
+
     .loading {
         text-align: center;
         padding: 60px 20px;
@@ -316,25 +405,15 @@
         margin: 0 3px;
     }
 
-    /* ── FOOTER ── */
-    footer {
-        padding: 16px 20px 24px;
-        border-top: 1px solid var(--border);
-    }
-    footer p {
-        color: var(--text-muted);
-        font-size: 10px;
-        letter-spacing: 0.5px;
-    }
+    footer { padding: 16px 20px 24px; border-top: 1px solid var(--border); }
+    footer p { color: var(--text-muted); font-size: 10px; letter-spacing: 0.5px; }
 
-    /* ── ANIMATIONS ── */
     @keyframes pulsating {
         0%   { transform: scale(1);   opacity: 1; }
         50%  { transform: scale(1.6); opacity: 0.5; }
         100% { transform: scale(1);   opacity: 1; }
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 480px) {
         #njt-badge { width: 50px; height: 35px; font-size: 16px; }
         th { padding: 10px 10px; font-size: 9px; }
@@ -343,6 +422,7 @@
         #train_data { padding: 0 8px 24px; }
         #controls { padding: 12px 12px; }
         #Station { font-size: 12px; }
+        #tracker-section { margin: 0 8px 12px; }
     }
 </style>
 </head>
@@ -542,6 +622,27 @@
         </div>
     </div>
 
+    <!-- TRACK A TRAIN -->
+    <div id="tracker-section">
+        <div id="tracker-header" onclick="toggleTracker()">
+            <div class="tracker-title">🔔 Track a Train — Get Notified on Delays & Cancellations</div>
+            <span id="tracker-arrow">▼</span>
+        </div>
+        <div id="tracker-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <div style="color:var(--text-dim);font-size:11px;">Enter a train number or click 🔔 on any row. We'll alert you if status changes.</div>
+                <button id="notif-permission-btn" onclick="requestNotifPermission()">🔔 Enable Notifications</button>
+            </div>
+            <div id="tracker-input-row">
+                <input id="track-train-input" type="text" placeholder="Train number e.g. 3827" />
+                <button id="track-btn" onclick="trackTrainFromInput()">Track</button>
+            </div>
+            <div id="tracked-list">
+                <div style="color:var(--text-muted);font-size:11px;text-align:center;padding:6px 0;">No trains tracked yet. Enter a number above or click 🔔 on any train row below.</div>
+            </div>
+        </div>
+    </div>
+
     <div id="train_data">
         <div class="loading">
             <span class="loading-dot"></span>
@@ -555,17 +656,141 @@
     </footer>
 
 <script>
-    // Clock
+    // CLOCK
     function updateClock() {
         document.getElementById('clock').textContent = new Date().toLocaleTimeString();
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Refresh button
-    const refreshInterval = setInterval(() => {
-        refreshPage(document.getElementById("Station").value);
-    }, 60000);
+    // TRACKER STATE — trainId -> { status, secLate, destination }
+    const trackedTrains = {};
+    let trackerOpen = true;
+
+    function toggleTracker() {
+        trackerOpen = !trackerOpen;
+        document.getElementById('tracker-body').style.display = trackerOpen ? 'flex' : 'none';
+        document.getElementById('tracker-arrow').textContent = trackerOpen ? '▲' : '▼';
+    }
+
+    // NOTIFICATIONS
+    function requestNotifPermission() {
+        if (!('Notification' in window)) { alert('Your browser does not support notifications.'); return; }
+        Notification.requestPermission().then(updateNotifBtn);
+    }
+
+    function updateNotifBtn(perm) {
+        const btn = document.getElementById('notif-permission-btn');
+        if (perm === 'granted') { btn.textContent = '✅ Notifications On'; btn.classList.add('granted'); }
+        else if (perm === 'denied') { btn.textContent = '🚫 Notifications Blocked'; }
+        else { btn.textContent = '🔔 Enable Notifications'; btn.classList.remove('granted'); }
+    }
+
+    if ('Notification' in window) updateNotifBtn(Notification.permission);
+
+    function sendNotification(title, body) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, { body });
+        }
+    }
+
+    // TRACK FROM INPUT
+    function trackTrainFromInput() {
+        const input = document.getElementById('track-train-input');
+        const trainId = input.value.trim();
+        if (!trainId) return;
+        addTrackedTrain(trainId);
+        input.value = '';
+    }
+
+    document.getElementById('track-train-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') trackTrainFromInput();
+    });
+
+    // ADD / REMOVE
+    function addTrackedTrain(trainId) {
+        if (trackedTrains[trainId]) return;
+        trackedTrains[trainId] = { status: null, secLate: null, destination: '' };
+        renderTrackedList();
+        const bellBtn = document.getElementById(`bell-${trainId}`);
+        if (bellBtn) bellBtn.classList.add('tracking');
+        if (Notification.permission !== 'granted') requestNotifPermission();
+    }
+
+    function removeTrackedTrain(trainId) {
+        delete trackedTrains[trainId];
+        renderTrackedList();
+        const bellBtn = document.getElementById(`bell-${trainId}`);
+        if (bellBtn) bellBtn.classList.remove('tracking');
+    }
+
+    function renderTrackedList() {
+        const list = document.getElementById('tracked-list');
+        const ids = Object.keys(trackedTrains);
+        if (ids.length === 0) {
+            list.innerHTML = `<div style="color:var(--text-muted);font-size:11px;text-align:center;padding:6px 0;">No trains tracked yet. Enter a number above or click 🔔 on any train row below.</div>`;
+            return;
+        }
+        list.innerHTML = ids.map(id => {
+            const t = trackedTrains[id];
+            let statusText = 'Checking...';
+            let statusColor = 'var(--text-dim)';
+            if (t.status === 'cancelled') { statusText = 'CANCELLED'; statusColor = '#ef4444'; }
+            else if (t.status === 'delayed') { statusText = `+${Math.floor(t.secLate/60)} min late`; statusColor = '#fbbf24'; }
+            else if (t.status === 'ontime') { statusText = 'On Time ✓'; statusColor = '#34d471'; }
+            const dest = t.destination ? ` → ${t.destination}` : '';
+            return `<div class="tracked-item">
+                <div class="tracked-info">
+                    <span class="tracked-train-id">Train ${id}</span>
+                    <span style="color:var(--text-dim);font-size:11px;">${dest}</span>
+                    <span style="font-size:11px;color:${statusColor}">${statusText}</span>
+                </div>
+                <button class="tracked-remove" onclick="removeTrackedTrain('${id}')" title="Stop tracking">✕</button>
+            </div>`;
+        }).join('');
+    }
+
+    // CHECK TRACKED TRAINS
+    async function checkTrackedTrains() {
+        const ids = Object.keys(trackedTrains);
+        if (ids.length === 0) return;
+        const station = document.getElementById("Station").value;
+        try {
+            const res = await fetch(`/trains/${station}`);
+            const data = await res.json();
+            for (let train of data) {
+                const id = train.TRAIN_ID;
+                if (!trackedTrains[id]) continue;
+                const prev = { ...trackedTrains[id] };
+                let newStatus = 'ontime';
+                let newSecLate = train.SEC_LATE || 0;
+                if (train.STATUS && train.STATUS.includes('Cancelled')) {
+                    newStatus = 'cancelled';
+                } else if (train.SEC_LATE > 120) {
+                    newStatus = 'delayed';
+                }
+                trackedTrains[id].status = newStatus;
+                trackedTrains[id].secLate = newSecLate;
+                trackedTrains[id].destination = train.DESTINATION || '';
+                // Fire notification only if status changed
+                if (prev.status !== null && prev.status !== newStatus) {
+                    if (newStatus === 'cancelled') {
+                        sendNotification(`🚨 Train ${id} Cancelled`, `Train ${id} to ${train.DESTINATION} has been cancelled.`);
+                    } else if (newStatus === 'delayed') {
+                        sendNotification(`⚠️ Train ${id} Delayed`, `Train ${id} to ${train.DESTINATION} is +${Math.floor(newSecLate/60)} min late.`);
+                    } else if (newStatus === 'ontime') {
+                        sendNotification(`✅ Train ${id} Back On Time`, `Train ${id} to ${train.DESTINATION} is now on time.`);
+                    }
+                }
+            }
+            renderTrackedList();
+        } catch(e) { console.error('Tracked train check failed:', e); }
+    }
+
+    setInterval(checkTrackedTrains, 60000);
+
+    // REFRESH
+    setInterval(() => { refreshPage(document.getElementById("Station").value); }, 60000);
 
     document.getElementById("refreshbutton").addEventListener("click", function() {
         refreshPage(document.getElementById("Station").value);
@@ -573,9 +798,10 @@
 
     function refreshPage(station) {
         fetch_train_data(station);
+        checkTrackedTrains();
     }
 
-    // Stops toggle
+    // STOPS
     function allStops(trainId) {
         fetch(`/trains/stops/${trainId}`)
             .then(r => r.json())
@@ -599,59 +825,44 @@
 
     function toggleStops(trainId) {
         const row = document.getElementById(`stops-${trainId}`);
-        if (row.style.display === "none" || row.style.display === "") {
-            allStops(trainId);
-        } else {
-            row.style.display = "none";
-        }
+        if (row.style.display === "none" || row.style.display === "") { allStops(trainId); }
+        else { row.style.display = "none"; }
     }
 
-    // Main fetch
+    // MAIN FETCH
     function fetch_train_data(station) {
         document.getElementById("train_data").innerHTML = `<div class="loading"><span class="loading-dot"></span><span class="loading-dot" style="animation-delay:0.2s"></span><span class="loading-dot" style="animation-delay:0.4s"></span></div>`;
 
         fetch(`/trains/${station}`)
             .then(r => r.json())
             .then(data => {
-                let html = `<table>
-                    <thead><tr>
-                        <th>Departure</th>
-                        <th>Train</th>
-                        <th>Stops</th>
-                        <th>Line</th>
-                        <th>Destination</th>
-                        <th>Status</th>
-                    </tr></thead><tbody>`;
+                let html = `<table><thead><tr>
+                    <th>Departure</th><th>Train</th><th>Stops</th><th>Track</th><th>Line</th><th>Destination</th><th>Status</th>
+                </tr></thead><tbody>`;
 
                 for (let i of data) {
                     let displayStatus = i.STATUS || "";
-                    let statusColor = "";
-                    let statusBg = "";
-
-                    if (!i.STATUS) {
-                        // no status
-                    } else if (i.STATUS.includes("Cancelled")) {
-                        statusColor = "#ef4444"; statusBg = "#2e0a0a";
-                    } else if (i.SEC_LATE > 120) {
-                        statusColor = "#fbbf24"; statusBg = "#4d2e0a";
-                        displayStatus = `+${Math.floor(i.SEC_LATE / 60)} min late`;
-                    } else if (i.STATUS.includes("Min")) {
-                        statusColor = "#34d471"; statusBg = "#0d2e1a";
-                    }
+                    let statusColor = "", statusBg = "";
+                    if (!i.STATUS) {}
+                    else if (i.STATUS.includes("Cancelled")) { statusColor = "#ef4444"; statusBg = "#2e0a0a"; }
+                    else if (i.SEC_LATE > 120) { statusColor = "#fbbf24"; statusBg = "#4d2e0a"; displayStatus = `+${Math.floor(i.SEC_LATE/60)} min late`; }
+                    else if (i.STATUS.includes("Min")) { statusColor = "#34d471"; statusBg = "#0d2e1a"; }
 
                     const dot = statusColor ? `<span class="status-dot" style="background:${statusColor}"></span>` : "";
                     const badge = displayStatus ? `<span class="status-badge" style="background:${statusBg};color:${statusColor}">${displayStatus}</span>` : "";
+                    const isTracking = trackedTrains[i.TRAIN_ID] ? 'tracking' : '';
 
                     html += `<tr>
                         <td class="dep-time">${i.SCHED_DEP_DATE}</td>
                         <td class="train-id">${i.TRAIN_ID}</td>
                         <td><button class="stops-btn" onclick="toggleStops('${i.TRAIN_ID}')">▼ stops</button></td>
+                        <td><button class="bell-btn ${isTracking}" id="bell-${i.TRAIN_ID}" onclick="toggleTrackFromTable('${i.TRAIN_ID}')" title="Track this train">🔔</button></td>
                         <td class="line-name">${i.LINE}</td>
                         <td class="destination">${i.DESTINATION}</td>
                         <td><div class="status-cell">${dot}${badge}</div></td>
                     </tr>
                     <tr id="stops-${i.TRAIN_ID}" class="stops-row" style="display:none">
-                        <td colspan="6"><div class="stops-inner" id="stops-content-${i.TRAIN_ID}"></div></td>
+                        <td colspan="7"><div class="stops-inner" id="stops-content-${i.TRAIN_ID}"></div></td>
                     </tr>`;
                 }
 
@@ -661,6 +872,16 @@
             .catch(() => {
                 document.getElementById("train_data").innerHTML = `<div class="loading" style="color:#ef4444">Failed to load data. Try refreshing.</div>`;
             });
+    }
+
+    function toggleTrackFromTable(trainId) {
+        if (trackedTrains[trainId]) {
+            removeTrackedTrain(trainId);
+        } else {
+            addTrackedTrain(trainId);
+            if (!trackerOpen) toggleTracker();
+            document.getElementById('tracker-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     document.getElementById("Station").addEventListener("change", function() {
