@@ -1,331 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com" rel="stylesheet">
-
-        <title>NJ Transit Tracker </title>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>NJ Transit Tracker</title>
 <style>
-    
-    #header{
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --yellow: rgb(187, 193, 35);
+        --bg: #000;
+        --surface: #111;
+        --border: #2a2a2a;
+        --border-light: #3a3a3a;
+        --text-dim: #888;
+        --text-muted: #555;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: white;
+        font-family: 'IBM Plex Mono', monospace;
+        min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    #header {
         display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        gap: 12px;
+    }
 
+    #njt-badge {
+        flex-shrink: 0;
+        width: 60px;
+        height: 40px;
+        background-color: var(--yellow);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Syne', sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        color: black;
     }
-    #header1{
-        margin:0px;
-        padding:0px;
-        font-family: Syne;
+
+    #header-titles {
+        flex: 1;
+        min-width: 0;
     }
-    body{
-        background-color: black;
+
+    #header-titles .title {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(18px, 4vw, 28px);
+        font-weight: 700;
+        color: white;
+        line-height: 1.1;
     }
-    #clock{
-        color:rgb(187, 193, 35);
-        margin-left: auto;
-        margin-top:27px;
-        font-size: 38px;
+
+    #header-titles .subtitle {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: clamp(9px, 2vw, 12px);
+        color: var(--text-dim);
+        margin-top: 3px;
+        letter-spacing: 2px;
     }
-    hr{
-        margin:0px;
-        padding: 0px;
-        border-color: rgb(42, 41, 41);
+
+    #clock {
+        color: var(--yellow);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: clamp(16px, 3.5vw, 32px);
+        font-weight: 500;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
-    td,th{
-        padding: 30px 16px;
-        border-bottom: 1px solid #5a5a5a;
+
+    hr {
+        border: none;
+        border-top: 1px solid var(--border);
     }
-  
-    #styletable{
-        border-radius: 15px;
-        overflow: hidden;
+
+    /* ── CONTROLS ── */
+    #controls {
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
+
+    #controls label {
+        color: var(--text-dim);
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    #controls-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    #Station {
+        flex: 1;
+        min-width: 0;
+        height: 38px;
+        border-radius: 6px;
+        background-color: var(--surface);
+        color: white;
+        border: 1px solid var(--border-light);
+        padding: 0 12px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    #Station:focus {
+        outline: none;
+        border-color: var(--yellow);
+    }
+
+    #refreshbutton {
+        flex-shrink: 0;
+        height: 38px;
+        padding: 0 16px;
+        background-color: var(--surface);
+        color: white;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        transition: border-color 0.2s, background 0.2s;
+    }
+
+    #refreshbutton:hover {
+        border-color: var(--yellow);
+        background-color: #1a1a00;
+    }
+
+    #refreshbutton .icon { font-size: 15px; }
+
+    /* ── TABLE WRAPPER ── */
     #train_data {
-    overflow-x: auto;
+        padding: 0 16px 24px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
-    @media (max-width: 768px) {
-        table {
-            font-size: 12px;
-        }
-        th, td {
-            padding: 8px 6px;
-        }
+
+    /* ── TABLE ── */
+    table {
+        width: 100%;
+        min-width: 560px;
+        border-collapse: collapse;
+        background: var(--surface);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
     }
-    @keyframes pulsating{
-        0%{transform:scale(1);opacity:1;}
-        50%{transform:scale(2);opacity:0.5;}
-        100%{transform:scale(1);opacity:1;}}
-    
+
+    thead tr {
+        background: #0d0d0d;
+    }
+
+    th {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 10px;
+        letter-spacing: 2px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover { background: #161616; }
+
+    .dep-time {
+        color: var(--yellow);
+        font-weight: 500;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    .train-id {
+        color: var(--text-dim);
+        font-size: 12px;
+    }
+
+    .destination {
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .line-name {
+        color: var(--text-dim);
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    /* stops button */
+    .stops-btn {
+        background: none;
+        border: 1px solid #3a3a3a;
+        color: var(--text-dim);
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        transition: border-color 0.2s, color 0.2s;
+        white-space: nowrap;
+    }
+    .stops-btn:hover {
+        border-color: var(--yellow);
+        color: var(--yellow);
+    }
+
+    /* status badge */
+    .status-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        animation: pulsating 1.5s infinite;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    /* stops expanded row */
+    .stops-row { display: none; }
+    .stops-row td {
+        padding: 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .stops-inner {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 12px 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 4px 16px;
+        background: #0a0a0a;
+    }
+    .stop-item {
+        font-size: 11px;
+        padding: 3px 0;
+        letter-spacing: 0.3px;
+    }
+
+    /* ── LOADING STATE ── */
+    .loading {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-dim);
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .loading-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--yellow);
+        animation: pulsating 1s infinite;
+        margin: 0 3px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+        padding: 16px 20px 24px;
+        border-top: 1px solid var(--border);
+    }
+    footer p {
+        color: var(--text-muted);
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes pulsating {
+        0%   { transform: scale(1);   opacity: 1; }
+        50%  { transform: scale(1.6); opacity: 0.5; }
+        100% { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+        #njt-badge { width: 50px; height: 35px; font-size: 16px; }
+        th { padding: 10px 10px; font-size: 9px; }
+        td { padding: 12px 10px; font-size: 12px; }
+        .status-badge { font-size: 10px; padding: 4px 7px; }
+        #train_data { padding: 0 8px 24px; }
+        #controls { padding: 12px 12px; }
+        #Station { font-size: 12px; }
+    }
 </style>
-    </head>
-    <body>
-        <div id="header">
-            <p style="float: left;margin-left:20px;border-radius:5px;display: flex;width: 75px;height: 45px;background-color: rgb(187, 193, 35);justify-content: center;align-items: center;font-family: 'Syne', sans-serif;font-size: 28px;"><b>NJT</b> </p>
-        <div id="header1"><p style="margin-top: 18px;padding-top: 8px;margin-bottom: 0px;margin-left: 12px;color: white;font-family:  'Syne', sans-serif;font-size: 30px;">Rail Tracker</p>
-        <p style="margin: 0px;margin-top:7px; margin-left: 12px;padding: 0px;color: white;font-family: 'IBM Plex Mono', monospace;font-size: 13px;">LIVE DEPARTURES</p></div>  
-        <span id="clock">  </span> </div> 
-       
+</head>
+<body>
 
-        <br><hr>
-         <div id="controls">
-            <p style="color: rgb(125, 123, 123);margin-left: 20px;">Select Station</p>
-            <select name="Stations" id="Station" style="margin-left: 20px; width: 800px;height: 30px;border-radius: 5px;background-color: rgb(42, 41, 41);color: white;">
-            <option value="AM">Aberdeen-Matawan</option>
-            <option value="AB">Absecon</option>
-            <option value="AZ">Allendale</option>
-            <option value="AH">Allenhurst</option>
-            <option value="AS">Anderson Street</option>
-            <option value="AN">Annandale</option>
-            <option value="AP">Asbury Park</option>
-            <option value="AO">Atco</option>
-            <option value="AC">Atlantic City Rail Terminal</option>
-            <option value="AV">Avenel</option>
-            <option value="BI">Basking Ridge</option>
-            <option value="BH">Bay Head</option>
-            <option value="MC">Bay Street</option>
-            <option value="BS">Belmar</option>
-            <option value="BY">Berkeley Heights</option>
-            <option value="BV">Bernardsville</option>
-            <option value="BM">Bloomfield</option>
-            <option value="BN">Boonton</option>
-            <option value="BK">Bound Brook</option>
-            <option value="BB">Bradley Beach</option>
-            <option value="BU">Brick Church</option>
-            <option value="BW">Bridgewater</option>
-            <option value="BF">Broadway Fair Lawn</option>
-            <option value="CB">Campbell Hall</option>
-            <option value="CM">Chatham</option>
-            <option value="CY">Cherry Hill</option>
-            <option value="IF">Clifton</option>
-            <option value="CN">Convent Station</option>
-            <option value="XC">Cranford</option>
-            <option value="DL">Delawanna</option>
-            <option value="DV">Denville</option>
-            <option value="DO">Dover</option>
-            <option value="DN">Dunellen</option>
-            <option value="EO">East Orange</option>
-            <option value="ED">Edison</option>
-            <option value="EH">Egg Harbor City</option>
-            <option value="EL">Elberon</option>
-            <option value="EZ">Elizabeth</option>
-            <option value="EN">Emerson</option>
-            <option value="EX">Essex Street</option>
-            <option value="FW">Fanwood</option>
-            <option value="FH">Far Hills</option>
-            <option value="FE">Finderne</option>
-            <option value="GD">Garfield</option>
-            <option value="GW">Garwood</option>
-            <option value="GI">Gillette</option>
-            <option value="GL">Gladstone</option>
-            <option value="GG">Glen Ridge</option>
-            <option value="GK">Glen Rock Boro Hall</option>
-            <option value="RS">Glen Rock Main Line</option>
-            <option value="GA">Great Notch</option>
-            <option value="HQ">Hackettstown</option>
-            <option value="HL">Hamilton</option>
-            <option value="HN">Hammonton</option>
-            <option value="RM">Harriman</option>
-            <option value="HW">Hawthorne</option>
-            <option value="HZ">Hazlet</option>
-            <option value="HG">High Bridge</option>
-            <option value="HI">Highland Avenue</option>
-            <option value="HD">Hillsdale</option>
-            <option value="HB">Hoboken</option>
-            <option value="UF">Hohokus</option>
-            <option value="JA">Jersey Avenue</option>
-            <option value="KG">Kingsland</option>
-            <option value="HP">Lake Hopatcong</option>
-            <option value="ON">Lebanon</option>
-            <option value="LP">Lincoln Park</option>
-            <option value="LI">Linden</option>
-            <option value="LW">Lindenwold</option>
-            <option value="FA">Little Falls</option>
-            <option value="LS">Little Silver</option>
-            <option value="LB">Long Branch</option>
-            <option value="LN">Lyndhurst</option>
-            <option value="LY">Lyons</option>
-            <option value="MA">Madison</option>
-            <option value="MZ">Mahwah</option>
-            <option value="SQ">Manasquan</option>
-            <option value="MW">Maplewood</option>
-            <option value="XU">Meadowlands</option>
-            <option value="MP">Metropark</option>
-            <option value="MU">Metuchen</option>
-            <option value="MI">Middletown NJ</option>
-            <option value="MD">Middletown NY</option>
-            <option value="MB">Millburn</option>
-            <option value="GO">Millington</option>
-            <option value="MK">Monmouth Park</option>
-            <option value="HS">Montclair Heights</option>
-            <option value="UV">Montclair State U</option>
-            <option value="ZM">Montvale</option>
-            <option value="MX">Morris Plains</option>
-            <option value="MR">Morristown</option>
-            <option value="HV">Mount Arlington</option>
-            <option value="OL">Mount Olive</option>
-            <option value="TB">Mount Tabor</option>
-            <option value="MS">Mountain Avenue</option>
-            <option value="ML">Mountain Lakes</option>
-            <option value="MT">Mountain Station</option>
-            <option value="MV">Mountain View</option>
-            <option value="MH">Murray Hill</option>
-            <option value="NN">Nanuet</option>
-            <option value="NT">Netcong</option>
-            <option value="NE">Netherwood</option>
-            <option value="NH">New Bridge Landing</option>
-            <option value="NB" selected>New Brunswick</option>
-            <option value="NV">New Providence</option>
-            <option value="NY">New York Penn Station</option>
-            <option value="NA">Newark Airport</option>
-            <option value="ND">Newark Broad Street</option>
-            <option value="NP">Newark Penn Station</option>
-            <option value="OR">North Branch</option>
-            <option value="NZ">North Elizabeth</option>
-            <option value="OD">Oradell</option>
-            <option value="OG">Orange</option>
-            <option value="OS">Otisville</option>
-            <option value="PV">Park Ridge</option>
-            <option value="PS">Passaic</option>
-            <option value="RN">Paterson</option>
-            <option value="PC">Peapack</option>
-            <option value="PQ">Pearl River</option>
-            <option value="PN">Pennsauken</option>
-            <option value="PE">Perth Amboy</option>
-            <option value="PH">Philadelphia</option>
-            <option value="PF">Plainfield</option>
-            <option value="PL">Plauderville</option>
-            <option value="PP">Point Pleasant Beach</option>
-            <option value="PO">Port Jervis</option>
-            <option value="PR">Princeton</option>
-            <option value="PJ">Princeton Junction</option>
-            <option value="FZ">Radburn Fair Lawn</option>
-            <option value="RH">Rahway</option>
-            <option value="RY">Ramsey Main St</option>
-            <option value="17">Ramsey Route 17</option>
-            <option value="RA">Raritan</option>
-            <option value="RB">Red Bank</option>
-            <option value="RW">Ridgewood</option>
-            <option value="RG">River Edge</option>
-            <option value="RL">Roselle Park</option>
-            <option value="RF">Rutherford</option>
-            <option value="CW">Salisbury Mills-Cornwall</option>
-            <option value="SC">Secaucus Concourse</option>
-            <option value="TS">Secaucus Lower Lvl</option>
-            <option value="SE">Secaucus Upper Lvl</option>
-            <option value="RT">Short Hills</option>
-            <option value="XG">Sloatsburg</option>
-            <option value="SM">Somerville</option>
-            <option value="CH">South Amboy</option>
-            <option value="SO">South Orange</option>
-            <option value="LA">Spring Lake</option>
-            <option value="SV">Spring Valley</option>
-            <option value="SG">Stirling</option>
-            <option value="SF">Suffern</option>
-            <option value="ST">Summit</option>
-            <option value="TE">Teterboro</option>
-            <option value="TO">Towaco</option>
-            <option value="TR">Trenton</option>
-            <option value="TC">Tuxedo</option>
-            <option value="US">Union</option>
-            <option value="UM">Upper Montclair</option>
-            <option value="WK">Waldwick</option>
-            <option value="WA">Walnut Street</option>
-            <option value="WS">Washington Station</option>
-            <option value="WG">Watchung Avenue</option>
-            <option value="WT">Watsessing Avenue</option>
-            <option value="23">Wayne-Route 23</option>
-            <option value="WM">Wesmont</option>
-            <option value="WF">Westfield</option>
-            <option value="WW">Westwood</option>
-            <option value="WH">White House</option>
-            <option value="WI">Wilmington Station</option>
-            <option value="WR">Wood Ridge</option>
-            <option value="WB">Woodbridge</option>
-            <option value="WL">Woodcliff Lake</option>
-            </select>
-            <button id="refreshbutton" style="background-color: rgb(42, 41, 41);color: white;margin-left: 75px;width:150px ;height: 30px;"><span style="font-size: 16px;">&#x21bb;</span>
-Refresh</button>
+    <div id="header">
+        <div id="njt-badge"><b>NJT</b></div>
+        <div id="header-titles">
+            <div class="title">Rail Tracker</div>
+            <div class="subtitle">LIVE DEPARTURES</div>
         </div>
+        <span id="clock"></span>
+    </div>
 
-        <div id="train_data" style="color: rgb(161, 157, 157); margin-left: 40px;margin-top: 40px;"></div>
+    <hr>
+
+    <div id="controls">
+        <label for="Station">Select Station</label>
+        <div id="controls-row">
+            <select name="Stations" id="Station">
+                <option value="AM">Aberdeen-Matawan</option>
+                <option value="AB">Absecon</option>
+                <option value="AZ">Allendale</option>
+                <option value="AH">Allenhurst</option>
+                <option value="AS">Anderson Street</option>
+                <option value="AN">Annandale</option>
+                <option value="AP">Asbury Park</option>
+                <option value="AO">Atco</option>
+                <option value="AC">Atlantic City Rail Terminal</option>
+                <option value="AV">Avenel</option>
+                <option value="BI">Basking Ridge</option>
+                <option value="BH">Bay Head</option>
+                <option value="MC">Bay Street</option>
+                <option value="BS">Belmar</option>
+                <option value="BY">Berkeley Heights</option>
+                <option value="BV">Bernardsville</option>
+                <option value="BM">Bloomfield</option>
+                <option value="BN">Boonton</option>
+                <option value="BK">Bound Brook</option>
+                <option value="BB">Bradley Beach</option>
+                <option value="BU">Brick Church</option>
+                <option value="BW">Bridgewater</option>
+                <option value="BF">Broadway Fair Lawn</option>
+                <option value="CB">Campbell Hall</option>
+                <option value="CM">Chatham</option>
+                <option value="CY">Cherry Hill</option>
+                <option value="IF">Clifton</option>
+                <option value="CN">Convent Station</option>
+                <option value="XC">Cranford</option>
+                <option value="DL">Delawanna</option>
+                <option value="DV">Denville</option>
+                <option value="DO">Dover</option>
+                <option value="DN">Dunellen</option>
+                <option value="EO">East Orange</option>
+                <option value="ED">Edison</option>
+                <option value="EH">Egg Harbor City</option>
+                <option value="EL">Elberon</option>
+                <option value="EZ">Elizabeth</option>
+                <option value="EN">Emerson</option>
+                <option value="EX">Essex Street</option>
+                <option value="FW">Fanwood</option>
+                <option value="FH">Far Hills</option>
+                <option value="FE">Finderne</option>
+                <option value="GD">Garfield</option>
+                <option value="GW">Garwood</option>
+                <option value="GI">Gillette</option>
+                <option value="GL">Gladstone</option>
+                <option value="GG">Glen Ridge</option>
+                <option value="GK">Glen Rock Boro Hall</option>
+                <option value="RS">Glen Rock Main Line</option>
+                <option value="GA">Great Notch</option>
+                <option value="HQ">Hackettstown</option>
+                <option value="HL">Hamilton</option>
+                <option value="HN">Hammonton</option>
+                <option value="RM">Harriman</option>
+                <option value="HW">Hawthorne</option>
+                <option value="HZ">Hazlet</option>
+                <option value="HG">High Bridge</option>
+                <option value="HI">Highland Avenue</option>
+                <option value="HD">Hillsdale</option>
+                <option value="HB">Hoboken</option>
+                <option value="UF">Hohokus</option>
+                <option value="JA">Jersey Avenue</option>
+                <option value="KG">Kingsland</option>
+                <option value="HP">Lake Hopatcong</option>
+                <option value="ON">Lebanon</option>
+                <option value="LP">Lincoln Park</option>
+                <option value="LI">Linden</option>
+                <option value="LW">Lindenwold</option>
+                <option value="FA">Little Falls</option>
+                <option value="LS">Little Silver</option>
+                <option value="LB">Long Branch</option>
+                <option value="LN">Lyndhurst</option>
+                <option value="LY">Lyons</option>
+                <option value="MA">Madison</option>
+                <option value="MZ">Mahwah</option>
+                <option value="SQ">Manasquan</option>
+                <option value="MW">Maplewood</option>
+                <option value="XU">Meadowlands</option>
+                <option value="MP">Metropark</option>
+                <option value="MU">Metuchen</option>
+                <option value="MI">Middletown NJ</option>
+                <option value="MD">Middletown NY</option>
+                <option value="MB">Millburn</option>
+                <option value="GO">Millington</option>
+                <option value="MK">Monmouth Park</option>
+                <option value="HS">Montclair Heights</option>
+                <option value="UV">Montclair State U</option>
+                <option value="ZM">Montvale</option>
+                <option value="MX">Morris Plains</option>
+                <option value="MR">Morristown</option>
+                <option value="HV">Mount Arlington</option>
+                <option value="OL">Mount Olive</option>
+                <option value="TB">Mount Tabor</option>
+                <option value="MS">Mountain Avenue</option>
+                <option value="ML">Mountain Lakes</option>
+                <option value="MT">Mountain Station</option>
+                <option value="MV">Mountain View</option>
+                <option value="MH">Murray Hill</option>
+                <option value="NN">Nanuet</option>
+                <option value="NT">Netcong</option>
+                <option value="NE">Netherwood</option>
+                <option value="NH">New Bridge Landing</option>
+                <option value="NB" selected>New Brunswick</option>
+                <option value="NV">New Providence</option>
+                <option value="NY">New York Penn Station</option>
+                <option value="NA">Newark Airport</option>
+                <option value="ND">Newark Broad Street</option>
+                <option value="NP">Newark Penn Station</option>
+                <option value="OR">North Branch</option>
+                <option value="NZ">North Elizabeth</option>
+                <option value="OD">Oradell</option>
+                <option value="OG">Orange</option>
+                <option value="OS">Otisville</option>
+                <option value="PV">Park Ridge</option>
+                <option value="PS">Passaic</option>
+                <option value="RN">Paterson</option>
+                <option value="PC">Peapack</option>
+                <option value="PQ">Pearl River</option>
+                <option value="PN">Pennsauken</option>
+                <option value="PE">Perth Amboy</option>
+                <option value="PH">Philadelphia</option>
+                <option value="PF">Plainfield</option>
+                <option value="PL">Plauderville</option>
+                <option value="PP">Point Pleasant Beach</option>
+                <option value="PO">Port Jervis</option>
+                <option value="PR">Princeton</option>
+                <option value="PJ">Princeton Junction</option>
+                <option value="FZ">Radburn Fair Lawn</option>
+                <option value="RH">Rahway</option>
+                <option value="RY">Ramsey Main St</option>
+                <option value="17">Ramsey Route 17</option>
+                <option value="RA">Raritan</option>
+                <option value="RB">Red Bank</option>
+                <option value="RW">Ridgewood</option>
+                <option value="RG">River Edge</option>
+                <option value="RL">Roselle Park</option>
+                <option value="RF">Rutherford</option>
+                <option value="CW">Salisbury Mills-Cornwall</option>
+                <option value="SC">Secaucus Concourse</option>
+                <option value="TS">Secaucus Lower Lvl</option>
+                <option value="SE">Secaucus Upper Lvl</option>
+                <option value="RT">Short Hills</option>
+                <option value="XG">Sloatsburg</option>
+                <option value="SM">Somerville</option>
+                <option value="CH">South Amboy</option>
+                <option value="SO">South Orange</option>
+                <option value="LA">Spring Lake</option>
+                <option value="SV">Spring Valley</option>
+                <option value="SG">Stirling</option>
+                <option value="SF">Suffern</option>
+                <option value="ST">Summit</option>
+                <option value="TE">Teterboro</option>
+                <option value="TO">Towaco</option>
+                <option value="TR">Trenton</option>
+                <option value="TC">Tuxedo</option>
+                <option value="US">Union</option>
+                <option value="UM">Upper Montclair</option>
+                <option value="WK">Waldwick</option>
+                <option value="WA">Walnut Street</option>
+                <option value="WS">Washington Station</option>
+                <option value="WG">Watchung Avenue</option>
+                <option value="WT">Watsessing Avenue</option>
+                <option value="23">Wayne-Route 23</option>
+                <option value="WM">Wesmont</option>
+                <option value="WF">Westfield</option>
+                <option value="WW">Westwood</option>
+                <option value="WH">White House</option>
+                <option value="WI">Wilmington Station</option>
+                <option value="WR">Wood Ridge</option>
+                <option value="WB">Woodbridge</option>
+                <option value="WL">Woodcliff Lake</option>
+            </select>
+            <button id="refreshbutton">
+                <span class="icon">&#x21bb;</span> Refresh
+            </button>
+        </div>
+    </div>
+
+    <div id="train_data">
+        <div class="loading">
+            <span class="loading-dot"></span>
+            <span class="loading-dot" style="animation-delay:0.2s"></span>
+            <span class="loading-dot" style="animation-delay:0.4s"></span>
+        </div>
+    </div>
+
+    <footer>
+        <p>Data sourced from NJ Transit. Not affiliated with or licensed by NJ Transit.</p>
+    </footer>
+
 <script>
+    // Clock
     function updateClock() {
-        var todayDate = new Date();
-        var todayTime = todayDate.toLocaleTimeString();
-        var clockElement = document.getElementById('clock');
-        clockElement.textContent = todayTime;
+        document.getElementById('clock').textContent = new Date().toLocaleTimeString();
     }
     setInterval(updateClock, 1000);
-    updateClock(); 
+    updateClock();
+
+    // Refresh button
+    const refreshInterval = setInterval(() => {
+        refreshPage(document.getElementById("Station").value);
+    }, 60000);
+
+    document.getElementById("refreshbutton").addEventListener("click", function() {
+        refreshPage(document.getElementById("Station").value);
+    });
+
     function refreshPage(station) {
         fetch_train_data(station);
     }
-    const refreshInterval = setInterval(() => {refreshPage(document.getElementById("Station").value);}, 60000);
-    document.getElementById("refreshbutton").addEventListener("click", function() {
-        clearInterval(refreshInterval);
-        refreshPage(document.getElementById("Station").value);
-    });
-    function allStops(trainId){
-        fetch(`/trains/stops/${trainId}`).then (response => response.json()).then (data => {console.log(data);
-            let stop=data["STOPS"];
-            let stopsList="";
-            for (let i of stop){
-                let stopColor = i["DEPARTED"] === "YES" ? "#666" : "white";
-                stopsList += `<div style='color:${stopColor}'>${i["STATIONNAME"]}</div>`;
-            }
-            document.getElementById(`stops-content-${trainId}`).innerHTML= stopsList;
-            document.getElementById(`stops-${trainId}`).style.display="block";
-        })
+
+    // Stops toggle
+    function allStops(trainId) {
+        fetch(`/trains/stops/${trainId}`)
+            .then(r => r.json())
+            .then(data => {
+                const stops = data["STOPS"];
+                if (!stops) {
+                    document.getElementById(`stops-content-${trainId}`).innerHTML = "<div class='stop-item' style='color:#666'>No stop data available</div>";
+                    document.getElementById(`stops-${trainId}`).style.display = "table-row";
+                    return;
+                }
+                let html = "";
+                for (let s of stops) {
+                    const color = s["DEPARTED"] === "YES" ? "#444" : "#ccc";
+                    const strike = s["DEPARTED"] === "YES" ? "text-decoration:line-through;" : "";
+                    html += `<div class='stop-item' style='color:${color};${strike}'>${s["STATIONNAME"]}</div>`;
+                }
+                document.getElementById(`stops-content-${trainId}`).innerHTML = html;
+                document.getElementById(`stops-${trainId}`).style.display = "table-row";
+            });
     }
+
     function toggleStops(trainId) {
         const row = document.getElementById(`stops-${trainId}`);
-        if (row.style.display === "none") {
+        if (row.style.display === "none" || row.style.display === "") {
             allStops(trainId);
         } else {
             row.style.display = "none";
         }
-}
-    function fetch_train_data(station){
-        fetch(`/trains/${station}`)
-        .then(response => response.json()).then(data =>  {console.log(data[1]);let htmlTable="<div id='styletable'><table style='width: 100%;border-collapse: collapse;border: 1px solid #2a2a2a;border-radius: 9px;'><tr><th style='rgb(187, 193, 35)'>DEPARTURE TIME</th><th>TRAIN</th><th>STOPS</th><th>LINE</th><th>DESTINATION</th><th>STATUS</th></tr>";
-            for (let i of data){
-                let displaystatus = i.STATUS;
-                let statusColor = "white";
-                let statusBg = "transparent";
-                let dotColor = "";
-                if (!i.STATUS) {
-
-                } else if (i.STATUS.includes("Cancelled")) { 
-                    statusColor = "#ef4444"; statusBg = "#2e0a0a"; 
-                } else if (i.SEC_LATE > 120) { 
-                    statusColor = "#fbbf24"; statusBg = "#4d2e0a"; 
-                    displaystatus = `+${Math.floor(i.SEC_LATE/60)} mins delayed`; 
-                } else if (i.STATUS.includes("Min")) { 
-                    statusColor = "#34d471"; statusBg = "#0d2e1a"; 
-                }
-                let dot = "";
-                if (statusBg !== "transparent") {
-                    dot =`<span style='display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${statusColor};animation:pulsating 1.5s infinite;margin-right:8px;'></span>`;
-                }
-
-                htmlTable+= `<tr style='text-align: center;'><td style='color: rgb(187, 193, 35)'>${i.SCHED_DEP_DATE}</td><td>${i.TRAIN_ID}</td><td><button onclick="toggleStops('${i.TRAIN_ID}')" style="background:none;border:1px solid #444;color:white;cursor:pointer;padding:4px 8px;border-radius:4px;">▼</button></td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${dot} &nbsp;<span style='background:${statusBg};color:${statusColor};padding:10px 12px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:1px;white-space:nowrap;'>${displaystatus}</span></td></tr>`;
-                htmlTable+=`<tr id="stops-${i.TRAIN_ID}" style="display:none; padding:5px;max-height: 170px;overflow-y: auto;"><td colspan="4" id="stops-content-${i.TRAIN_ID}"></td></tr>`;}
-            htmlTable+=`</table></div>`;
-            document.getElementById("train_data").innerHTML=htmlTable;})
     }
-    document.getElementById("Station").addEventListener("change",function(){
-        const selectedStation = this.value;
-        fetch_train_data(selectedStation);
+
+    // Main fetch
+    function fetch_train_data(station) {
+        document.getElementById("train_data").innerHTML = `<div class="loading"><span class="loading-dot"></span><span class="loading-dot" style="animation-delay:0.2s"></span><span class="loading-dot" style="animation-delay:0.4s"></span></div>`;
+
+        fetch(`/trains/${station}`)
+            .then(r => r.json())
+            .then(data => {
+                let html = `<table>
+                    <thead><tr>
+                        <th>Departure</th>
+                        <th>Train</th>
+                        <th>Stops</th>
+                        <th>Line</th>
+                        <th>Destination</th>
+                        <th>Status</th>
+                    </tr></thead><tbody>`;
+
+                for (let i of data) {
+                    let displayStatus = i.STATUS || "";
+                    let statusColor = "";
+                    let statusBg = "";
+
+                    if (!i.STATUS) {
+                        // no status
+                    } else if (i.STATUS.includes("Cancelled")) {
+                        statusColor = "#ef4444"; statusBg = "#2e0a0a";
+                    } else if (i.SEC_LATE > 120) {
+                        statusColor = "#fbbf24"; statusBg = "#4d2e0a";
+                        displayStatus = `+${Math.floor(i.SEC_LATE / 60)} min late`;
+                    } else if (i.STATUS.includes("Min")) {
+                        statusColor = "#34d471"; statusBg = "#0d2e1a";
+                    }
+
+                    const dot = statusColor ? `<span class="status-dot" style="background:${statusColor}"></span>` : "";
+                    const badge = displayStatus ? `<span class="status-badge" style="background:${statusBg};color:${statusColor}">${displayStatus}</span>` : "";
+
+                    html += `<tr>
+                        <td class="dep-time">${i.SCHED_DEP_DATE}</td>
+                        <td class="train-id">${i.TRAIN_ID}</td>
+                        <td><button class="stops-btn" onclick="toggleStops('${i.TRAIN_ID}')">▼ stops</button></td>
+                        <td class="line-name">${i.LINE}</td>
+                        <td class="destination">${i.DESTINATION}</td>
+                        <td><div class="status-cell">${dot}${badge}</div></td>
+                    </tr>
+                    <tr id="stops-${i.TRAIN_ID}" class="stops-row" style="display:none">
+                        <td colspan="6"><div class="stops-inner" id="stops-content-${i.TRAIN_ID}"></div></td>
+                    </tr>`;
+                }
+
+                html += `</tbody></table>`;
+                document.getElementById("train_data").innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById("train_data").innerHTML = `<div class="loading" style="color:#ef4444">Failed to load data. Try refreshing.</div>`;
+            });
+    }
+
+    document.getElementById("Station").addEventListener("change", function() {
+        fetch_train_data(this.value);
     });
+
     fetch_train_data("NB");
 </script>
-<footer>
-    <p style="color: gray;"><i>**Data sourced from NJ Transit. Not affiliated with or licensed by NJ Transit.**</i></p>
-</footer>
-    </body>
-    </html>
-
-
+</body>
+</html>
