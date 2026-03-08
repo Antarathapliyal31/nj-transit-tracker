@@ -150,7 +150,7 @@
     #refreshbutton:hover { border-color: var(--yellow); background-color: #1a1a00; }
     #refreshbutton .icon { font-size: 15px; }
 
-    /* ── TRACKER SECTION ── */
+    /* TRACKER */
     #tracker-section {
         margin: 0 16px 16px;
         border: 1px solid var(--border-light);
@@ -241,7 +241,7 @@
     }
 
     #notif-permission-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-    #notif-permission-btn.granted { color: #34d471; border-color: #34d471; cursor: default; }
+    #notif-permission-btn.granted { color: #34d399; border-color: #34d399; cursor: default; }
 
     .tracked-item {
         display: flex;
@@ -280,7 +280,7 @@
 
     .tracked-remove:hover { color: #ef4444; }
 
-    /* ── TABLE ── */
+    /* TABLE */
     #train_data {
         padding: 0 16px 24px;
         overflow-x: auto;
@@ -347,7 +347,7 @@
         padding: 5px 8px;
         border-radius: 4px;
         font-size: 13px;
-        transition: border-color 0.2s, color 0.2s;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
     .bell-btn:hover { border-color: var(--yellow); color: var(--yellow); }
     .bell-btn.tracking { border-color: var(--yellow); color: var(--yellow); background: #1a1a00; }
@@ -625,13 +625,13 @@
     <!-- TRACK A TRAIN -->
     <div id="tracker-section">
         <div id="tracker-header" onclick="toggleTracker()">
-            <div class="tracker-title">🔔 Track a Train — Get Notified on Delays & Cancellations</div>
+            <div class="tracker-title">🔔 Track a Train — Get Notified Even When Tab is Closed</div>
             <span id="tracker-arrow">▼</span>
         </div>
         <div id="tracker-body">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                <div style="color:var(--text-dim);font-size:11px;">Enter a train number or click 🔔 on any row. We'll alert you if status changes.</div>
-                <button id="notif-permission-btn" onclick="requestNotifPermission()">🔔 Enable Notifications</button>
+                <div style="color:var(--text-dim);font-size:11px;">Enable notifications, then track any train. We'll alert you even if this tab is closed.</div>
+                <button id="notif-permission-btn" onclick="enableNotifications()">🔔 Enable Notifications</button>
             </div>
             <div id="tracker-input-row">
                 <input id="track-train-input" type="text" placeholder="Train number e.g. 3827" />
@@ -663,10 +663,31 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // TRACKER STATE — trainId -> { status, secLate, destination }
+    // TRACKER STATE
     const trackedTrains = {};
     let trackerOpen = true;
+    let swRegistration = null;
+    let pushSubscription = null;
 
+    // SERVICE WORKER REGISTRATION
+    async function registerServiceWorker() {
+        if (!('serviceWorker' in navigator)) return;
+        try {
+            swRegistration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered');
+            // Check if already subscribed
+            pushSubscription = await swRegistration.pushManager.getSubscription();
+            if (pushSubscription) {
+                updateNotifBtn('granted');
+            }
+        } catch(e) {
+            console.error('SW registration failed:', e);
+        }
+    }
+
+    registerServiceWorker();
+
+    // TOGGLE TRACKER SECTION
     function toggleTracker() {
         trackerOpen = !trackerOpen;
         document.getElementById('tracker-body').style.display = trackerOpen ? 'flex' : 'none';
@@ -674,23 +695,83 @@
     }
 
     // NOTIFICATIONS
-    function requestNotifPermission() {
-        if (!('Notification' in window)) { alert('Your browser does not support notifications.'); return; }
-        Notification.requestPermission().then(updateNotifBtn);
-    }
-
-    function updateNotifBtn(perm) {
+    function updateNotifBtn(state) {
         const btn = document.getElementById('notif-permission-btn');
-        if (perm === 'granted') { btn.textContent = '✅ Notifications On'; btn.classList.add('granted'); }
-        else if (perm === 'denied') { btn.textContent = '🚫 Notifications Blocked'; }
-        else { btn.textContent = '🔔 Enable Notifications'; btn.classList.remove('granted'); }
+        if (state === 'granted') {
+            btn.textContent = '✅ Notifications On';
+            btn.classList.add('granted');
+        } else if (state === 'denied') {
+            btn.textContent = '🚫 Notifications Blocked';
+        } else {
+            btn.textContent = '🔔 Enable Notifications';
+            btn.classList.remove('granted');
+        }
     }
 
-    if ('Notification' in window) updateNotifBtn(Notification.permission);
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        return new Uint8Array([...rawData].map(c => c.charCodeAt(0)));
+    }
 
-    function sendNotification(title, body) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(title, { body });
+    async function enableNotifications() {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            alert('Push notifications are not supported in this browser.');
+            return;
+        }
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                updateNotifBtn('denied');
+                return;
+            }
+            // Get public VAPID key from server
+            const keyRes = await fetch('/vapid-public-key');
+            const keyData = await keyRes.json();
+            const applicationServerKey = urlBase64ToUint8Array(keyData.publicKey);
+
+            if (!swRegistration) {
+                swRegistration = await navigator.serviceWorker.ready;
+            }
+
+            pushSubscription = await swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey
+            });
+
+            // Send subscription to server
+            await fetch('/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subscription: pushSubscription.toJSON(),
+                    trains: Object.keys(trackedTrains)
+                })
+            });
+
+            updateNotifBtn('granted');
+            console.log('Push subscription successful');
+        } catch(e) {
+            console.error('Failed to subscribe:', e);
+            alert('Could not enable notifications. Please try again.');
+        }
+    }
+
+    // SYNC TRACKED TRAINS TO SERVER
+    async function syncSubscription() {
+        if (!pushSubscription) return;
+        try {
+            await fetch('/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subscription: pushSubscription.toJSON(),
+                    trains: Object.keys(trackedTrains)
+                })
+            });
+        } catch(e) {
+            console.error('Sync failed:', e);
         }
     }
 
@@ -714,7 +795,8 @@
         renderTrackedList();
         const bellBtn = document.getElementById(`bell-${trainId}`);
         if (bellBtn) bellBtn.classList.add('tracking');
-        if (Notification.permission !== 'granted') requestNotifPermission();
+        syncSubscription();
+        if (Notification.permission !== 'granted') enableNotifications();
     }
 
     function removeTrackedTrain(trainId) {
@@ -722,6 +804,7 @@
         renderTrackedList();
         const bellBtn = document.getElementById(`bell-${trainId}`);
         if (bellBtn) bellBtn.classList.remove('tracking');
+        syncSubscription();
     }
 
     function renderTrackedList() {
@@ -737,7 +820,7 @@
             let statusColor = 'var(--text-dim)';
             if (t.status === 'cancelled') { statusText = 'CANCELLED'; statusColor = '#ef4444'; }
             else if (t.status === 'delayed') { statusText = `+${Math.floor(t.secLate/60)} min late`; statusColor = '#fbbf24'; }
-            else if (t.status === 'ontime') { statusText = 'On Time ✓'; statusColor = '#34d471'; }
+            else if (t.status === 'ontime') { statusText = 'On Time ✓'; statusColor = '#34d399'; }
             const dest = t.destination ? ` → ${t.destination}` : '';
             return `<div class="tracked-item">
                 <div class="tracked-info">
@@ -750,7 +833,7 @@
         }).join('');
     }
 
-    // CHECK TRACKED TRAINS
+    // LOCAL STATUS CHECK (when tab is open)
     async function checkTrackedTrains() {
         const ids = Object.keys(trackedTrains);
         if (ids.length === 0) return;
@@ -764,27 +847,24 @@
                 const prev = { ...trackedTrains[id] };
                 let newStatus = 'ontime';
                 let newSecLate = train.SEC_LATE || 0;
-                if (train.STATUS && train.STATUS.includes('Cancelled')) {
-                    newStatus = 'cancelled';
-                } else if (train.SEC_LATE > 120) {
-                    newStatus = 'delayed';
-                }
+                if (train.STATUS && train.STATUS.includes('Cancelled')) { newStatus = 'cancelled'; }
+                else if (train.SEC_LATE > 120) { newStatus = 'delayed'; }
                 trackedTrains[id].status = newStatus;
                 trackedTrains[id].secLate = newSecLate;
                 trackedTrains[id].destination = train.DESTINATION || '';
-                // Fire notification only if status changed
+                // Show local notification if tab is open and status changed
                 if (prev.status !== null && prev.status !== newStatus) {
-                    if (newStatus === 'cancelled') {
-                        sendNotification(`🚨 Train ${id} Cancelled`, `Train ${id} to ${train.DESTINATION} has been cancelled.`);
-                    } else if (newStatus === 'delayed') {
-                        sendNotification(`⚠️ Train ${id} Delayed`, `Train ${id} to ${train.DESTINATION} is +${Math.floor(newSecLate/60)} min late.`);
-                    } else if (newStatus === 'ontime') {
-                        sendNotification(`✅ Train ${id} Back On Time`, `Train ${id} to ${train.DESTINATION} is now on time.`);
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        let title, body;
+                        if (newStatus === 'cancelled') { title = `🚨 Train ${id} Cancelled`; body = `Train ${id} to ${train.DESTINATION} cancelled.`; }
+                        else if (newStatus === 'delayed') { title = `⚠️ Train ${id} Delayed`; body = `Train ${id} to ${train.DESTINATION} is +${Math.floor(newSecLate/60)} min late.`; }
+                        else { title = `✅ Train ${id} On Time`; body = `Train ${id} to ${train.DESTINATION} is now on time.`; }
+                        new Notification(title, { body });
                     }
                 }
             }
             renderTrackedList();
-        } catch(e) { console.error('Tracked train check failed:', e); }
+        } catch(e) { console.error('Check tracked trains error:', e); }
     }
 
     setInterval(checkTrackedTrains, 60000);
@@ -846,7 +926,7 @@
                     if (!i.STATUS) {}
                     else if (i.STATUS.includes("Cancelled")) { statusColor = "#ef4444"; statusBg = "#2e0a0a"; }
                     else if (i.SEC_LATE > 120) { statusColor = "#fbbf24"; statusBg = "#4d2e0a"; displayStatus = `+${Math.floor(i.SEC_LATE/60)} min late`; }
-                    else if (i.STATUS.includes("Min")) { statusColor = "#34d471"; statusBg = "#0d2e1a"; }
+                    else if (i.STATUS.includes("Min")) { statusColor = "#34d399"; statusBg = "#0d2e1a"; }
 
                     const dot = statusColor ? `<span class="status-dot" style="background:${statusColor}"></span>` : "";
                     const badge = displayStatus ? `<span class="status-badge" style="background:${statusBg};color:${statusColor}">${displayStatus}</span>` : "";
