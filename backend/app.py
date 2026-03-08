@@ -71,7 +71,15 @@ def index():
 @app.route("/sw.js")
 def service_worker():
     frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
-    return send_from_directory(frontend_path, "sw.js", mimetype='application/javascript')
+    response = send_from_directory(frontend_path, "sw.js", mimetype='application/javascript')
+    response.headers['Service-Worker-Allowed'] = '/'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
+
+@app.route("/manifest.json")
+def manifest():
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+    return send_from_directory(frontend_path, "manifest.json", mimetype='application/json')
 
 @app.route("/vapid-public-key")
 def get_vapid_key():
