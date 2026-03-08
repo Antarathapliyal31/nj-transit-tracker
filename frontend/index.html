@@ -8,6 +8,7 @@
 
         <title>NJ Transit Tracker </title>
 <style>
+    
     #header{
         display: flex;
 
@@ -21,7 +22,7 @@
         background-color: black;
     }
     #clock{
-        color:yellow;
+        color:rgb(187, 193, 35);
         margin-left: auto;
         margin-top:27px;
         font-size: 38px;
@@ -31,11 +32,25 @@
         padding: 0px;
         border-color: rgb(42, 41, 41);
     }
+    td,th{
+        padding: 30px 16px;
+        border-bottom: 1px solid #5a5a5a;
+    }
+  
+    #styletable{
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    @keyframes pulsating{
+        0%{transform:scale(1);opacity:1;}
+        50%{transform:scale(2);opacity:0.5;}
+        100%{transform:scale(1);opacity:1;}}
+    
 </style>
     </head>
     <body>
         <div id="header">
-            <p style="float: left;margin-left:20px;border-radius:5px;display: flex;width: 75px;height: 45px;background-color: yellow;justify-content: center;align-items: center;font-family: 'Syne', sans-serif;font-size: 28px;"><b>NJT</b> </p>
+            <p style="float: left;margin-left:20px;border-radius:5px;display: flex;width: 75px;height: 45px;background-color: rgb(187, 193, 35);justify-content: center;align-items: center;font-family: 'Syne', sans-serif;font-size: 28px;"><b>NJT</b> </p>
         <div id="header1"><p style="margin-top: 18px;padding-top: 8px;margin-bottom: 0px;margin-left: 12px;color: white;font-family:  'Syne', sans-serif;font-size: 30px;">Rail Tracker</p>
         <p style="margin: 0px;margin-top:7px; margin-left: 12px;padding: 0px;color: white;font-family: 'IBM Plex Mono', monospace;font-size: 13px;">LIVE DEPARTURES</p></div>  
         <span id="clock">  </span> </div> 
@@ -43,7 +58,7 @@
 
         <br><hr>
          <div id="controls">
-            <p style="color: rgb(69, 67, 67);margin-left: 20px;">Select Station</p>
+            <p style="color: rgb(125, 123, 123);margin-left: 20px;">Select Station</p>
             <select name="Stations" id="Station" style="margin-left: 20px; width: 800px;height: 30px;border-radius: 5px;background-color: rgb(42, 41, 41);color: white;">
             <option value="AM">Aberdeen-Matawan</option>
             <option value="AB">Absecon</option>
@@ -148,7 +163,7 @@
             <option value="NT">Netcong</option>
             <option value="NE">Netherwood</option>
             <option value="NH">New Bridge Landing</option>
-            <option value="NB">New Brunswick</option>
+            <option value="NB" selected>New Brunswick</option>
             <option value="NV">New Providence</option>
             <option value="NY">New York Penn Station</option>
             <option value="NA">Newark Airport</option>
@@ -222,7 +237,7 @@
 Refresh</button>
         </div>
 
-        <div id="train_data" style="color: rgb(76, 74, 74); margin-left: 40px;margin-top: 40px;"></div>
+        <div id="train_data" style="color: rgb(161, 157, 157); margin-left: 40px;margin-top: 40px;"></div>
 <script>
     function updateClock() {
         var todayDate = new Date();
@@ -232,28 +247,71 @@ Refresh</button>
     }
     setInterval(updateClock, 1000);
     updateClock(); 
-    function refreshPage() {
-        window.location.reload();
+    function refreshPage(station) {
+        fetch_train_data(station);
     }
-    const refreshInterval = setInterval(refreshPage, 30000);
+    const refreshInterval = setInterval(() => {refreshPage(document.getElementById("Station").value);}, 60000);
     document.getElementById("refreshbutton").addEventListener("click", function() {
         clearInterval(refreshInterval);
-        refreshPage();
+        refreshPage(document.getElementById("Station").value);
     });
+    function allStops(trainId){
+        fetch(`http://localhost:5000/trains/stops/${trainId}`).then (response => response.json()).then (data => {console.log(data);
+            let stop=data["STOPS"];
+            let stopsList="";
+            for (let i of stop){
+                let stopColor = i["DEPARTED"] === "YES" ? "#666" : "white";
+                stopsList += `<div style='color:${stopColor}'>${i["STATIONNAME"]}</div>`;
+            }
+            document.getElementById(`stops-content-${trainId}`).innerHTML= stopsList;
+            document.getElementById(`stops-${trainId}`).style.display="block";
+        })
+    }
+    function toggleStops(trainId) {
+        const row = document.getElementById(`stops-${trainId}`);
+        if (row.style.display === "none") {
+            allStops(trainId);
+        } else {
+            row.style.display = "none";
+        }
+}
+    function fetch_train_data(station){
+        fetch(`http://localhost:5000/trains/${station}`)
+        .then(response => response.json()).then(data =>  {console.log(data[1]);let htmlTable="<div id='styletable'><table style='width: 100%;border-collapse: collapse;border: 1px solid #2a2a2a;border-radius: 9px;'><tr><th style='rgb(187, 193, 35)'>DEPARTURE TIME</th><th>TRAIN</th><th>STOPS</th><th>LINE</th><th>DESTINATION</th><th>STATUS</th></tr>";
+            for (let i of data){
+                let displaystatus = i.STATUS;
+                let statusColor = "white";
+                let statusBg = "transparent";
+                let dotColor = "";
+                if (!i.STATUS) {
 
+                } else if (i.STATUS.includes("Cancelled")) { 
+                    statusColor = "#ef4444"; statusBg = "#2e0a0a"; 
+                } else if (i.SEC_LATE > 120) { 
+                    statusColor = "#fbbf24"; statusBg = "#4d2e0a"; 
+                    displaystatus = `+${Math.floor(i.SEC_LATE/60)} mins delayed`; 
+                } else if (i.STATUS.includes("Min")) { 
+                    statusColor = "#34d471"; statusBg = "#0d2e1a"; 
+                }
+                let dot = "";
+                if (statusBg !== "transparent") {
+                    dot =`<span style='display:inline-block;width:8px;height:8px;border-radius:50%;background-color:${statusColor};animation:pulsating 1.5s infinite;margin-right:8px;'></span>`;
+                }
+
+                htmlTable+= `<tr style='text-align: center;'><td style='color: rgb(187, 193, 35)'>${i.SCHED_DEP_DATE}</td><td>${i.TRAIN_ID}</td><td><button onclick="toggleStops('${i.TRAIN_ID}')" style="'background:none;border:1px solid #444;color:white;cursor:pointer;padding:4px 8px;border-radius:4px;">▼</button></td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${dot} &nbsp;<span style='background:${statusBg};color:${statusColor};padding:10px 12px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:1px;white-space:nowrap;'>${displaystatus}</span></td></tr>`;
+                htmlTable+=`<tr id="stops-${i.TRAIN_ID}" style="display:none; padding:5px;max-height: 170px;overflow-y: auto;"><td colspan="4" id="stops-content-${i.TRAIN_ID}"></td></tr>`;}
+            htmlTable+=`</table></div>`;
+            document.getElementById("train_data").innerHTML=htmlTable;})
+    }
     document.getElementById("Station").addEventListener("change",function(){
         const selectedStation = this.value;
-        fetch(`http://localhost:5000/trains/${selectedStation}`)
-        .then(response => response.json()).then(data =>  {console.log(data[0]);let htmlTable="<table style='width: 100%;'><tr><th>Train</th><th>Line</th><th>DESTINATION</th><th>Departure Time</th><th>STATUS</th></tr>";
-            for (let i of data){
-                let statusColor = "white";
-                if (i.STATUS.includes("Cancelled")) statusColor = "red";
-                else if (i.STATUS.includes("Min") && i.SEC_LATE > 0) statusColor = "orange";
-                htmlTable+= `<tr style='text-align: center;'><td>${i.TRAIN_ID}</td><td>${i.LINE}</td><td>${i.DESTINATION}</td><td>${i.SCHED_DEP_DATE}</td><td>${i.STATUS}</td></tr>`;}
-            htmlTable+=`</table>`;
-            document.getElementById("train_data").innerHTML=htmlTable;})
+        fetch_train_data(selectedStation);
     });
+    fetch_train_data("NB");
 </script>
+<footer>
+    <p style="color: gray;"><i>**Data sourced from NJ Transit. Not affiliated with or licensed by NJ Transit.**</i></p>
+</footer>
     </body>
     </html>
 
